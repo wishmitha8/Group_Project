@@ -151,3 +151,57 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         data = super().get_context_data(**kwargs)
         data['tag_line'] = 'Add a new post'
         return data
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['content']
+    template_name = 'blog/post_new.html'
+    success_url = '/'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        return is_users(self.get_object().author, self.request.user)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['tag_line'] = 'Edit a post'
+        return data
+
+class FollowsListView(ListView):
+    model = Follow
+    template_name = 'blog/follow.html'
+    context_object_name = 'follows'
+
+    def visible_user(self):
+        return get_object_or_404(User, username=self.kwargs.get('username'))
+
+    def get_queryset(self):
+        user = self.visible_user()
+        return Follow.objects.filter(user=user).order_by('-date')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['follow'] = 'follows'
+        return data
+
+class FollowersListView(ListView):
+    model = Follow
+    template_name = 'blog/follow.html'
+    context_object_name = 'follows'
+
+    def visible_user(self):
+        return get_object_or_404(User, username=self.kwargs.get('username'))
+
+    def get_queryset(self):
+        user = self.visible_user()
+        return Follow.objects.filter(follow_user=user).order_by('-date')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['follow'] = 'followers'
+        return data
+       
