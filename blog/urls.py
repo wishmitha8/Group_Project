@@ -12,7 +12,7 @@ from .views import (
     post_list)
 from .import views
 from django.urls import include
-from rest_framework import routers
+from rest_framework import router
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
