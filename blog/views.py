@@ -2,6 +2,22 @@ from django.shortcuts import render, get_object_or_404, redirect
 from blog.models import Post, Comment, Preference
 from users.models import Follow, Profile
 import sys
+from django.contrib.auth.models import User
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Count
+from .forms import NewCommentForm
+from django.contrib.auth.decorators import login_required
+from .serializers import UserSerializer, GroupSerializer, PostSerializer
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from rest_framework import permissions
+from rest_framework.decorators import api_view
+from django.http.response import JsonResponse
+from rest_framework.parsers import JSONParser 
+from rest_framework import status
+
+
 
 def is_users(post_user, logged_user):
     return post_user == logged_user
@@ -90,4 +106,24 @@ class UserPostListView(LoginRequiredMixin, ListView):
 
         return self.get(self, request, *args, **kwargs)
 
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        comments_connected = Comment.objects.filter(post_connected=self.get_object()).order_by('-date_posted')
+        data['comments'] = comments_connected
+        data['form'] = NewCommentForm(instance=self.request.user)
+        return data
+
+    def post(self, request, *args, **kwargs):
+        new_comment = Comment(content=request.POST.get('content'),
+                              author=self.request.user,
+                              post_connected=self.get_object())
+        new_comment.save()
+
+        return self.get(self, request, *args, **kwargs)
 
