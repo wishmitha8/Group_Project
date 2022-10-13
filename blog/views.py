@@ -272,3 +272,38 @@ def postpreference(request, postid, userpreference):
 
                                 return redirect('blog-home')
                            
+                
+                except Preference.DoesNotExist:
+                        upref= Preference()
+
+                        upref.user= request.user
+
+                        upref.post= eachpost
+
+                        upref.value= userpreference
+
+                        userpreference= int(userpreference)
+
+                        if userpreference == 1:
+                                eachpost.likes += 1
+                        elif userpreference == 2:
+                                eachpost.dislikes +=1
+
+                        upref.save()
+
+                        eachpost.save()                            
+
+
+                        context= {'eachpost': eachpost,
+                          'postid': postid}
+
+                        return redirect('blog-home')
+
+
+        else:
+                eachpost= get_object_or_404(Post, id=postid)
+                context= {'eachpost': eachpost,
+                          'postid': postid}
+
+                return redirect('blog-home')
+
