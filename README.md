@@ -1,4 +1,4 @@
-1. Git Clone the project with:     
+1. Git Clone the project with the Code URL.    
 
 2. Move to the base directory: cd Group_Project
 
