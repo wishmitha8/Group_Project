@@ -6,10 +6,10 @@
 
 4. Activate enveronment with: env\Scripts\activate 
 
-5  Install required dependences with: pip install -r requirements.txt
+ 5  Install required dependences with: pip install -r requirements.txt
 
 6. Run: python manage.py migrate 
 
-7: Run:  python manage.py makemigrations
+ 7: Run:  python manage.py makemigrations
 
 8. Run app localy with: python manage.py runserver.
