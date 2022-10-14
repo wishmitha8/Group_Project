@@ -18,7 +18,6 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 
-
 def is_users(post_user, logged_user):
     return post_user == logged_user
 
@@ -127,6 +126,7 @@ class PostDetailView(DetailView):
 
         return self.get(self, request, *args, **kwargs)
 
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'blog/post_delete.html'
@@ -171,6 +171,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         data['tag_line'] = 'Edit a post'
         return data
 
+
 class FollowsListView(ListView):
     model = Follow
     template_name = 'blog/follow.html'
@@ -188,6 +189,7 @@ class FollowsListView(ListView):
         data['follow'] = 'follows'
         return data
 
+
 class FollowersListView(ListView):
     model = Follow
     template_name = 'blog/follow.html'
@@ -204,6 +206,7 @@ class FollowersListView(ListView):
         data = super().get_context_data(**kwargs)
         data['follow'] = 'followers'
         return data
+
 
 # Like Functionality====================================================================================
 
@@ -271,7 +274,9 @@ def postpreference(request, postid, userpreference):
                                   'postid': postid}
 
                                 return redirect('blog-home')
-                           
+                                
+                        
+        
                 
                 except Preference.DoesNotExist:
                         upref= Preference()
@@ -307,6 +312,8 @@ def postpreference(request, postid, userpreference):
 
                 return redirect('blog-home')
 
+
+
 def about(request):
     return render(request,'blog/about.html',)
 
@@ -328,6 +335,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
 
 @api_view(['GET', 'POST', 'DELETE'])
 def post_list(request):
@@ -353,4 +362,4 @@ def post_list(request):
     elif request.method == 'DELETE':
         count = Post.objects.all().delete()
         return JsonResponse({'message': '{} Posts were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
-     
+ 
